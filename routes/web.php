@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AssetController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::put('/assets/{asset}/lifecycle', [AssetController::class, 'updateLifecycle']);
