@@ -55,4 +55,47 @@ class LifecycleServiceTest extends TestCase
         // Try to skip 'installed' and go straight to 'commissioned'
         $service->transition($asset, 'commissioned', $user->id);
     }
+    public function test_asset_cannot_be_commissioned_without_a_checklist()
+    {
+        $user = User::factory()->create();
+        $category = AssetCategory::create(['name' => 'X-Ray']);
+        $asset = Asset::create([
+            'asset_category_id' => $category->id,
+            'name' => 'X-Ray 01',
+            'serial_number' => 'SN-123',
+            'lifecycle_state' => 'installed' 
+        ]);
+
+        $service = new LifecycleService();
+        
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("Cannot commission asset: No mandatory checklist items found.");
+        
+        $service->transition($asset, 'commissioned', $user->id);
+    }
+
+    public function test_asset_can_be_commissioned_when_all_mandatory_items_pass()
+    {
+        $user = User::factory()->create();
+        $category = AssetCategory::create(['name' => 'X-Ray']);
+        $asset = Asset::create([
+            'asset_category_id' => $category->id,
+            'name' => 'X-Ray 01',
+            'serial_number' => 'SN-123',
+            'lifecycle_state' => 'installed' 
+        ]);
+
+        // Add a passing checklist item
+        $asset->commissioningChecklists()->create([
+            'item_name' => 'Electrical Safety',
+            'is_mandatory' => true,
+            'is_passed' => true,
+            'checked_by' => $user->id
+        ]);
+
+        $service = new LifecycleService();
+        $service->transition($asset, 'commissioned', $user->id);
+
+        $this->assertEquals('commissioned', $asset->fresh()->lifecycle_state);
+    }
 }

@@ -20,16 +20,33 @@ class LifecycleService
     {
         $currentState = $asset->lifecycle_state;
 
-        // 1. Enforce the rules
+        // 1. Enforce the basic state machine rules
         if (!in_array($newState, $this->allowedTransitions[$currentState])) {
             throw new Exception("Invalid lifecycle transition from '{$currentState}' to '{$newState}'.");
         }
 
-        // 2. Update the asset
+        // 2. The Commissioning Gate
+        if ($newState === 'commissioned') {
+            $mandatoryItems = $asset->commissioningChecklists()->where('is_mandatory', true)->get();
+            
+            // If there are no checklist items at all, block it
+            if ($mandatoryItems->isEmpty()) {
+                throw new Exception("Cannot commission asset: No mandatory checklist items found.");
+            }
+
+            // If any mandatory item has not passed, block it
+            $failedItems = $mandatoryItems->where('is_passed', false);
+            if ($failedItems->isNotEmpty()) {
+                $failedNames = $failedItems->pluck('item_name')->join(', ');
+                throw new Exception("Cannot commission asset. Failed/pending items: {$failedNames}");
+            }
+        }
+
+        // 3. Update the asset
         $asset->lifecycle_state = $newState;
         $asset->save();
 
-        // 3. Record history in the append-only ledger (Section 10)
+        // 4. Record history
         StatusEvent::create([
             'asset_id' => $asset->id,
             'previous_state' => $currentState,

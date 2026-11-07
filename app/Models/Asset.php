@@ -12,9 +12,12 @@ class Asset extends Model
     {
         return $this->belongsTo(AssetCategory::class, 'asset_category_id');
     }
-
     public function statusEvents()
     {
         return $this->hasMany(StatusEvent::class);
+    }
+    public function commissioningChecklists()
+    {
+        return $this->hasMany(CommissioningChecklist::class);
     }
 }
