@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('reason_code', 40);
             $table->text('note')->nullable();
             $table->string('ticket_state', 40); // state when the pause began
-            $table->timestamp('paused_at');
+            $table->timestamp('paused_at')->useCurrent();
             $table->foreignId('paused_by')->constrained('users');
             $table->string('paused_by_role', 40);
             $table->timestamp('resumed_at')->nullable();
