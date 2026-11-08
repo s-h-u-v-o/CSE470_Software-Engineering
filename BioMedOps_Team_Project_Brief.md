@@ -171,6 +171,8 @@ An out-of-service decision is an explicit record/event with an authorized actor,
 
 Display the specific blocker separately. An active blocking ticket may be labelled “under repair” when repair work has started, but a critical ticket blocks readiness even before assignment or repair. `technically_ready` means technical conditions pass; it does not mean service is staffed.
 
+Gap detection must not rely on a cached readiness flag: readiness is derived from the source records above. G8 instead reports contradictions in those records, including a retired asset with an open ticket or active hold, a work-state ticket without an assignee, a closed ticket with an unresolved SLA pause, or downtime events that the ledger cannot derive.
+
 ### D. Staffing readiness and service availability
 
 **Staffing readiness at time `t`:** at least one operator is authorized for the asset category, the authorization is valid at `t`, and a roster shift covers `t`.
@@ -280,11 +282,11 @@ Each rule needs positive and negative test cases and a message naming the releva
 | G5 | PM overdue with no approved deferral | Core, when PM due engine is active |
 | G6 | Required calibration/safety check overdue | Requires F24 detailed calibration/safety records; secondary |
 | G7 | Lifecycle says `commissioned` without a passed commissioning checklist | Core |
-| G8 | Derived/readiness record contradicts active source records, e.g. a cached display says `technically_ready` while a blocking ticket or hold exists | Core |
+| G8 | Active source records contradict each other: a retired asset has an open ticket or active hold; a work-state ticket has no assignee; a closed ticket has an unresolved SLA pause; or downtime events cannot be derived by the ledger | Core |
 | G9 | Repeated failures (N tickets on an asset within a configured window) have no corrective-action record | Requires F23 corrective-action workflow; secondary |
 | G10 | Operator authorization is expired or invalid while the operator is rostered for the asset category | Core |
 
-**Important dependency rule:** F25 is the gap-detection framework, but the initial core implementation activates G1, G3, G5, G7, G8 and G10. Add G2, G4, G6 and G9 only after their required modules are implemented and tested. Do not claim all G1–G10 are complete when their dependencies are absent.
+**Important dependency rule:** F25 is the gap-detection framework, and the initial implementation activates G1, G3, G7 and G8. Add G2, G4, G5, G6, G9 and G10 only after their required modules are implemented and tested. Do not claim all G1–G10 are complete when their dependencies are absent.
 
 For every active code, the result names the exact records involved, the condition that failed and a suggested next review step. A missing record is not automatically evidence of a physical equipment discrepancy.
 
@@ -371,14 +373,14 @@ These are candidates for faculty approval. The professor may merge related items
 | ID | Feature | Acceptance criterion |
 |---|---|---|
 | F24 | Calibration/safety-check records with certificate hash | Record stores readings, result, certificate sha256. Missing or altered file detected. |
-| F25 | Gap detection engine (staged G1-G10 rules) | Core G1, G3, G5, G7, G8 and G10 each fire on positive cases and stay silent on negative cases. G2, G4, G6 and G9 are enabled only after their secondary dependencies are delivered. Messages name the records involved. |
+| F25 | Gap detection engine (staged G1-G10 rules) | Core G1, G3, G7 and G8 each fire on positive cases and stay silent on negative cases. G8 checks contradictory source records rather than a cached readiness value. G2, G4, G5, G6, G9 and G10 are enabled only after their dependencies are delivered. Messages name the records involved. |
 | F26 | Audit trail viewer and chain verification | Authorized users inspect events. Verification reports the first broken link. |
 | F27 | Notifications with dedupe (optional) | In-app reminders for due or breached items. Repeats suppressed. |
 | F28 | Spreadsheet import wizard (optional) | Column mapping, preview, row-level errors, no duplicate or partial posting. |
 
 ### Priority tiers
 
-**Core (13):** F01, F02, F03, F05, F08, F09, F10, F11, F12, F16, F17, F18, F25 (core gap rules only: G1, G3, G5, G7, G8, G10).
+**Core (13):** F01, F02, F03, F05, F08, F09, F10, F11, F12, F16, F17, F18, F25 (core gap rules only: G1, G3, G7, G8).
 **Secondary (11):** F04, F13, F14, F15, F19, F20, F21, F22, F23, F24, F26.
 **Optional (4):** F06, F07, F27, F28.
 
