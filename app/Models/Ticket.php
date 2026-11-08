@@ -20,4 +20,24 @@ class Ticket extends Model
     {
         return $this->belongsTo(Asset::class);
     }
+
+    public function reporter()
+    {
+        return $this->belongsTo(User::class, 'reported_by');
+    }
+
+    public function assignee()
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    public function events()
+    {
+        return $this->hasMany(TicketEvent::class)->orderBy('occurred_at')->orderBy('id');
+    }
+
+    public function slaPauses()
+    {
+        return $this->hasMany(SlaPause::class)->orderBy('paused_at')->orderBy('id');
+    }
 }
