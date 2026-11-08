@@ -31,6 +31,7 @@
                         <th class="px-4 py-2 text-left">Asset Name</th>
                         <th class="px-4 py-2 text-left">Serial</th>
                         <th class="px-4 py-2 text-left">Lifecycle State</th>
+                        <th class="px-4 py-2 text-left">Technical Readiness</th>
                         <th class="px-4 py-2 text-left">Checklist Status</th>
                         <th class="px-4 py-2 text-left">Actions</th>
                     </tr>
@@ -42,6 +43,14 @@
                             <td class="px-4 py-3">{{ $asset->serial_number }}</td>
                             <td class="px-4 py-3 font-semibold text-blue-600">
                                 {{ $asset->lifecycle_state }}
+                            </td>
+                            <td class="px-4 py-3">
+                                <span class="font-semibold {{ $asset->readiness['technically_ready'] ? 'text-green-700' : 'text-red-700' }}">
+                                    {{ str_replace('_', ' ', $asset->readiness['state']) }}
+                                </span>
+                                @if($asset->readiness['blocker'])
+                                    <div class="text-sm text-gray-600">{{ $asset->readiness['blocker'] }}</div>
+                                @endif
                             </td>
                             <td class="px-4 py-3">
                                 @if($asset->commissioningChecklists->isEmpty())
@@ -80,7 +89,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-4 py-4 text-center text-gray-500">No assets found in the database.</td>
+                            <td colspan="6" class="px-4 py-4 text-center text-gray-500">No assets found in the database.</td>
                         </tr>
                     @endforelse
                 </tbody>

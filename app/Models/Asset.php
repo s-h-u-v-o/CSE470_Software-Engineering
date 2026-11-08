@@ -20,4 +20,14 @@ class Asset extends Model
     {
         return $this->hasMany(CommissioningChecklist::class);
     }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
+
+    public function holds()
+    {
+        return $this->hasMany(AssetHold::class);
+    }
 }

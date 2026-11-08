@@ -14,10 +14,17 @@ class StatusEvent extends Model
         'occurred_at', 
         'recorded_at', 
         'cause_type',
+        'downtime_action',
+        'cause_key',
         'ticket_id',
         'actor_id', 
         'reason'
     ];
+
+    protected function casts(): array
+    {
+        return ['occurred_at' => 'datetime', 'recorded_at' => 'datetime'];
+    }
 
     // Relationships
     public function asset()
