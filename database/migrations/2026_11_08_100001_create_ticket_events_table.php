@@ -23,8 +23,8 @@ return new class extends Migration
             $table->foreignId('actor_id')->constrained('users');
             $table->string('actor_role', 40);
             $table->text('reason')->nullable();
-            $table->timestamp('occurred_at');
-            $table->timestamp('recorded_at');
+            $table->timestamp('occurred_at')->useCurrent();
+            $table->timestamp('recorded_at')->useCurrent();
             $table->timestamps();
             $table->index(['ticket_id', 'occurred_at']);
         });

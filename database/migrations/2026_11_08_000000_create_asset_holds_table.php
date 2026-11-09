@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('asset_id')->constrained()->cascadeOnDelete();
             $table->enum('type', ['quarantine', 'out_of_service']);
             $table->text('reason');
-            $table->timestamp('started_at');
+            $table->timestamp('started_at')->useCurrent();
             $table->timestamp('ended_at')->nullable();
             $table->foreignId('actor_id')->constrained('users');
             $table->timestamps();

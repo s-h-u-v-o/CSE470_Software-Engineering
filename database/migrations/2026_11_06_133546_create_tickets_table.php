@@ -41,8 +41,8 @@ return new class extends Migration
             $table->text('description'); // What is wrong with the machine
             
             // Section 8: Time and Recording Policy
-            $table->timestamp('occurred_at'); // When the machine broke
-            $table->timestamp('recorded_at'); // When it was logged in the system
+            $table->timestamp('occurred_at')->useCurrent(); // When the machine broke
+            $table->timestamp('recorded_at')->useCurrent(); // When it was logged in the system
             
             $table->timestamps();
         });

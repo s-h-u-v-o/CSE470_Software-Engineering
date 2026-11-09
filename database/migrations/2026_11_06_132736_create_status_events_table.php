@@ -24,8 +24,8 @@ return new class extends Migration
             $table->string('previous_state')->nullable();
             
             // Section 8: Time and Recording Policy
-            $table->timestamp('occurred_at'); // When the event actually happened in the real world
-            $table->timestamp('recorded_at'); // When it was entered into the system
+            $table->timestamp('occurred_at')->useCurrent(); // When the event actually happened in the real world
+            $table->timestamp('recorded_at')->useCurrent(); // When it was entered into the system
             
             // Section 10: planned or unplanned downtime
             $table->enum('cause_type', ['planned', 'unplanned'])->nullable();
