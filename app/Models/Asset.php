@@ -30,4 +30,14 @@ class Asset extends Model
     {
         return $this->hasMany(AssetHold::class);
     }
+    
+    public function receiving()
+    {
+        return $this->hasOne(Receiving::class);
+    }
+
+    public function warrantyTerms()
+    {
+        return $this->hasMany(WarrantyTerm::class);
+    }
 }
